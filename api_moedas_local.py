@@ -8,10 +8,10 @@ from pandas_gbq import to_gbq
 import os
 from dotenv import load_dotenv
 
-
+# Carrega objeto do tipo '.env' com as credenciais de escrita no Big Query
 load_dotenv()
-#Usamos a função currancy para pegar a cotação das moeda, em Real, no período
 
+#Usamos a função currancy para pegar a cotação das moeda, em Real, no período
 def get_cotacao_moeda(moedas, data_inicio, data_fim):
     dados = currency.get(moedas, start=data_inicio, end=data_fim)
     dados = dados.reset_index()
@@ -20,7 +20,7 @@ def get_cotacao_moeda(moedas, data_inicio, data_fim):
 
 
 
-# Import para o BQ
+# Função de escrita no Big Query
 def load_to_bq(data_frame, dataset_id, table_id, project_id):
     try:
         # Define a referência da tabela
@@ -45,13 +45,13 @@ def main():
     data_final = datetime.today()
     data_inicial = data_inicial.strftime('%Y-%m-%d')
     data_final = data_final.strftime('%Y-%m-%d')
-    moedas = ['ARS', 'COU', 'USD', 'CLP']
+    moedas = ['ARS', 'COU', 'USD', 'CLP'] # Moedas a serem cotadas
     dados = get_cotacao_moeda(moedas, data_inicial, data_final)
 
     data_frame  = dados
     dataset_id = 'api_moedas'  # Dataset do BigQuery
     table_id = 'historico_cotacoes'      # Tabela no BigQuery - Cria ou faz o append
-    project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')  # ID do projeto no BigQuery
+    project_id = os.getenv('GOOGLE_CLOUD_PROJECT_ID')  # ID do projeto no BigQuery (presente no .env com o JSON com as credenciais de Acesso).
     load_to_bq(data_frame, dataset_id, table_id, project_id)
 
 if __name__ == "__main__":
